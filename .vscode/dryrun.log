@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/red/projects/Polygons'
+make: Leaving directory '/home/red/projects/Polygons'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+

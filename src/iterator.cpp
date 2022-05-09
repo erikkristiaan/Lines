@@ -9,16 +9,6 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-// enum get_aliasing(bool anti_a)
-// {
-//     if (anti_a == true) {
-//         return cv::LINE_AA
-//     }
-//     else {
-//         return cv::LINE_8
-//     }
-// }
-
 cv::Point2i get_first_point(int &height, int &width)
 {
     cv::Point2i point(rand() % width + 1, rand() % height + 1);
@@ -74,6 +64,10 @@ void iterate(cv::Mat &img, int prim_size, int iters, int frames, int cpalette, b
     int height = img.size().height;
     int width = img.size().width;
 
+    int a_a = (anti_a == true ? 16 : 8); // return 16 if aa == true else return 8 for line options
+    std::cout << "anti-aliasing: " << a_a << std::endl;
+
+    // auto anti_a = [](auto anti_a)
     // auto anti_a = get_aliasing(anti_a)
 
     for (int f = 0; f < frames; f++) {
@@ -103,7 +97,7 @@ void iterate(cv::Mat &img, int prim_size, int iters, int frames, int cpalette, b
             }
             // if new score is less than old score, add line to canvas
             if (new_dist < old_dist) {
-                line(newimg, point1, point2, rand_color, 1, cv::LINE_8);
+                line(newimg, point1, point2, rand_color, 1, a_a);
             }
             // output progress to console
             if (i % (iters / 20) == 0) {

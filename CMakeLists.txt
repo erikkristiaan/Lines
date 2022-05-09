@@ -18,4 +18,6 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 # Include Dir
 include_directories(./include)
 
-set(CMAKE_CXX_FLAGS "-O2")
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+set(CMAKE_CXX_FLAGS_DEBUG "-O2")
+set(CMAKE_CXX_FLAGS_RELEASE "-Ofast")

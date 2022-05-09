@@ -1,6 +1,9 @@
 #include <iostream>
+#include <filesystem>
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
+
 #include "output.hpp"
 
 void output_to_console(int &i , int &iters) 
@@ -26,6 +29,7 @@ void finished_frame(int f, int frames, cv::Mat img)
     std::cout << std::endl;
     std::cout << "Finished frame: " << f + 1 << " of " << frames << std::endl;
 
+    std::filesystem::create_directory("output");
     std::string filename = "output/f" + std::to_string(f) + ".jpg";
     cv::imwrite(filename, img);
 }
