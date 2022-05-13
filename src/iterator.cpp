@@ -11,12 +11,13 @@
 
 cv::Point2i get_first_point(int &height, int &width)
 {
-    cv::Point2i point(rand() % width + 1, rand() % height + 1);
-    return point;
+    // return random (x,y) point from the canvas
+    return cv::Point2i(rand() % width + 1, rand() % height + 1);
 }
 
 cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Point2i &point1)
 {
+    // return (x,y) point from first (x,y) point +/- line_length within canvas bounds
     int x_min = point1.x - line_length;
     int x_max = point1.x + line_length;
 
@@ -37,6 +38,7 @@ cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Poin
 
 cv::Vec3b get_color(int &height, int &width, cv::Mat &img, int option) 
 {
+    // return Vec3b BGR value from either canvas palette or random val
     if (option == 1) {
         cv::Vec3b color(rand() % 256, rand() % 256, rand() % 256);
         return color;
@@ -52,6 +54,7 @@ cv::Vec3b get_color(int &height, int &width, cv::Mat &img, int option)
 
 long euclidean_dist(cv::Vec3b &a, cv::Vec3b &b)
 {
+    // return the euclidean distance between BGR values at (x1, y1) and (x2, y2)
     using std::pow;
     using std::sqrt;
     return sqrt(pow(a.val[0] - b.val[0], 2) + pow(a.val[1] - b.val[1], 2) + pow(a.val[2] - b.val[2], 2));
@@ -65,10 +68,7 @@ void iterate(cv::Mat &img, int prim_size, int iters, int frames, int cpalette, b
     int width = img.size().width;
 
     int a_a = (anti_a == true ? 16 : 8); // return 16 if aa == true else return 8 for line options
-    std::cout << "anti-aliasing: " << a_a << std::endl;
-
-    // auto anti_a = [](auto anti_a)
-    // auto anti_a = get_aliasing(anti_a)
+    // std::cout << "anti-aliasing: " << a_a << std::endl; // debug
 
     for (int f = 0; f < frames; f++) {
         
@@ -104,9 +104,6 @@ void iterate(cv::Mat &img, int prim_size, int iters, int frames, int cpalette, b
                 output_to_console(i, iters);
             }
         }
-        // cv::imshow("Image", newimg);
-        // cv::waitKey(0);
-        // write frame to file
         finished_frame(f, frames, newimg);
     }
 }
