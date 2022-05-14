@@ -1,7 +1,9 @@
 #include <iostream>
 #include <time.h>
 #include <cmath>
+#include <vector>
 
+#include "algorithm.hpp"
 #include "iterator.hpp"
 #include "loader.hpp"
 #include "output.hpp"
@@ -36,18 +38,59 @@ cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Poin
     return cv::Point2i(i, j);
 }
 
-cv::Vec3b get_color(int &height, int &width, cv::Mat &img, int option) 
+std::vector<std::array<uchar, 3>> get_palette(int &height, int &width, cv::Mat &img, bool make_unique)
+{
+    std::vector<std::array<uchar, 3>> palette;
+
+    for (int y = 0; y < height; ++y) 
+    {
+        for (int x = 0; x < width; ++x) 
+        {
+            uchar B = img.at<cv::Vec3b>(y,x)[0];
+            uchar G = img.at<cv::Vec3b>(y,x)[1];
+            uchar R = img.at<cv::Vec3b>(y,x)[2];
+
+            palette.push_back({B, G, R});
+        }
+    }
+    
+    if (make_unique)
+    {
+        palette = remove_duplicates(palette);
+    }
+    return palette;
+}
+
+std::array<uchar, 3> random_sample(std::vector<std::array<uchar, 3>> &vec)
+{
+    uint32_t index = rand() % vec.size();
+    auto sample = vec[index];
+
+    return sample;
+}
+
+cv::Vec3b get_color(int &height, int &width, cv::Mat &img, int option, std::vector<std::array<uchar, 3>> &p)
 {
     // return Vec3b BGR value from either canvas palette or random val
-    if (option == 1) {
+    if (option == 1) 
+    {
         cv::Vec3b color(rand() % 256, rand() % 256, rand() % 256);
         return color;
     }
-    else if (option == 2) {
-        cv::Vec3b color = img.at<cv::Vec3b>(rand() % height + 1, rand() % width + 1);
+    else if (option == 2) 
+    {
+        auto sample = random_sample(p);
+        cv::Vec3b color(sample[0], sample[1], sample[2]);    
         return color;
     }
-    else {
+    else if (option == 3) 
+    {
+        auto sample = random_sample(p);
+        cv::Vec3b color(sample[0], sample[1], sample[2]);
+        return color;
+    }
+    else 
+    {
         throw std::invalid_argument("Did not recieve valid color palette input.");
     }
 }
@@ -60,33 +103,46 @@ long euclidean_dist(cv::Vec3b &a, cv::Vec3b &b)
     return sqrt(pow(a.val[0] - b.val[0], 2) + pow(a.val[1] - b.val[1], 2) + pow(a.val[2] - b.val[2], 2));
 }
 
-void iterate(cv::Mat &img, int prim_size, int iters, int frames, int cpalette, bool anti_a)
+void iterate(cv::Mat &img, int prim_size, int iters, int frames, int p_option, bool anti_a)
 {
     srand (time(NULL)); // Intialize seed for rand() function
 
     int height = img.size().height;
     int width = img.size().width;
+    std::vector<std::array<uchar, 3>> color_palette;
 
     int a_a = (anti_a == true ? 16 : 8); // return 16 if aa == true else return 8 for line options
     // std::cout << "anti-aliasing: " << a_a << std::endl; // debug
 
-    for (int f = 0; f < frames; f++) {
+    if (p_option == 2) 
+    {
+        color_palette = get_palette(height, width, img, false);
+    }
+    if (p_option == 3) 
+    {
+        color_palette = get_palette(height, width, img, true);
+    }
+
+    for (int f = 0; f < frames; f++) 
+    {
         
         cv::Mat newimg = new_image(height, width); // Create blank image
 
-        for (int i = 1; i <= iters; i++) {
+        for (int i = 1; i <= iters; i++) 
+        {
             long old_dist = 0;
             long new_dist = 0;
 
             // Get two points and a random color
-            auto rand_color = get_color(height, width, img, cpalette);
+            auto rand_color = get_color(height, width, img, p_option, color_palette);
             auto point1 = get_first_point(height, width);
             auto point2 = get_second_point(height, width, prim_size, point1);
 
             cv::LineIterator line_iter(img, point1, point2, 8);
             cv::Vec3b buffer(line_iter.count); // buffer for BGR values
 
-            for (int i = 0; i < line_iter.count; i++, ++line_iter) {
+            for (int i = 0; i < line_iter.count; i++, ++line_iter) 
+            {
 
                 // Get BGR Vec3b at pos (x,y)
                 cv::Vec3b im_color = img.at<cv::Vec3b>(line_iter.pos());
@@ -96,11 +152,13 @@ void iterate(cv::Mat &img, int prim_size, int iters, int frames, int cpalette, b
                 old_dist += euclidean_dist(im_color, new_color);   
             }
             // if new score is less than old score, add line to canvas
-            if (new_dist < old_dist) {
+            if (new_dist < old_dist)
+            {
                 line(newimg, point1, point2, rand_color, 1, a_a);
             }
             // output progress to console
-            if (i % (iters / 20) == 0) {
+            if (i % (iters / 20) == 0)
+            {
                 output_to_console(i, iters);
             }
         }

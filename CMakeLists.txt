@@ -7,6 +7,7 @@ set(SOURCES
     src/iterator.cpp
     src/loader.cpp
     src/output.cpp
+    src/algorithm.cpp
 )
 
 find_package(OpenCV REQUIRED)

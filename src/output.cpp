@@ -14,10 +14,12 @@ void output_to_console(int &i , int &iters)
 
     std::cout << "[";
 
-    for (int i = 0; i < barwidth; i++) {
+    for (int i = 0; i < barwidth; i++)
+    {
         std::cout << "#";
     }
-    for (int j = 0; j < prog; j++) {
+    for (int j = 0; j < prog; j++)
+    {
         std::cout << " ";
     }
     std::cout << "] : " << int(pct * 100) << "%\r";
