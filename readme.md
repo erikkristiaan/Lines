@@ -68,4 +68,4 @@ Polygons is a program I wrote a while back to tackle the following programming c
 
 `./Polygons -c 3 -f ../examples/example3.jpg -a true -p 40 -i 10000000 -x 10`
 
-![asdf](https://thumbs.gfycat.com/RingedCommonApisdorsatalaboriosa-mobile.mp4)
+![](https://i.imgur.com/4KVlPcn.gif)
