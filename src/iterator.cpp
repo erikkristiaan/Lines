@@ -71,24 +71,25 @@ std::array<uchar, 3> random_sample(std::vector<std::array<uchar, 3>> &vec)
 
 cv::Vec3b get_color(int &height, int &width, cv::Mat &img, int option, std::vector<std::array<uchar, 3>> &p)
 {
-    // return Vec3b BGR value from either canvas palette or random val
     if (option == 1) 
     {
+        // return BGR value from random value from 0 - 255 for each channel
         cv::Vec3b color(rand() % 256, rand() % 256, rand() % 256);
         return color;
     }
-    else if (option == 2) 
+    else if (option == 2 || option == 3) 
     {
+        // return random BGR value from input vector
         auto sample = random_sample(p);
         cv::Vec3b color(sample[0], sample[1], sample[2]);    
         return color;
     }
-    else if (option == 3) 
-    {
-        auto sample = random_sample(p);
-        cv::Vec3b color(sample[0], sample[1], sample[2]);
-        return color;
-    }
+    // else if (option == 3) 
+    // {
+    //     auto sample = random_sample(p);
+    //     cv::Vec3b color(sample[0], sample[1], sample[2]);
+    //     return color;
+    // }
     else 
     {
         throw std::invalid_argument("Did not recieve valid color palette input.");
@@ -116,10 +117,12 @@ void iterate(cv::Mat &img, int prim_size, int iters, int frames, int p_option, b
 
     if (p_option == 2) 
     {
+        // return full color palette
         color_palette = get_palette(height, width, img, false);
     }
     if (p_option == 3) 
     {
+        // return unique color palette
         color_palette = get_palette(height, width, img, true);
     }
 
