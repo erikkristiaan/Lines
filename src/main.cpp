@@ -12,7 +12,7 @@ int main (int argc, char **argv)
     int prim_size = 30;
     int iters = 20000000;
     int frames = 1;
-    int p_option = 1;    
+    int p_option = 3;    
     bool show_image_flag = false;
     bool anti_a = true;
     std::string filename = "../examples/default.jpg";
@@ -20,9 +20,9 @@ int main (int argc, char **argv)
 
     CLI::App app("Polygons");
         app.add_option("--primitives,-p", prim_size, "Primitive size in pixels. (default: 30)");
-        app.add_option("--iters,-i", iters, "Number of iterations to complete (default 10000000)");
+        app.add_option("--iterations,-i", iters, "Number of iterations to complete (default 10000000)");
         app.add_option("--frames,-x", frames, "Number of frames to render (default: 1)");
-        app.add_option("--pallet,-c", p_option, "The color pallet to use. (default: 1");        
+        app.add_option("--palette,-c", p_option, "The color palette to use. (default: 3");        
         app.add_option("--show,-s", show_image_flag, "Show result when iterations have completed. (default: false)");
         app.add_option("--antialiasing,-a", anti_a, "Use anti-aliasing (default: true)");
         app.add_option("--filename,-f", filename, "Filename.");
