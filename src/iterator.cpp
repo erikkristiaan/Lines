@@ -81,27 +81,62 @@ cv::Vec3b get_color(int &height, int &width, cv::Mat &img, int option, std::vect
     {
         // return random BGR value from input vector
         auto sample = random_sample(p);
-        cv::Vec3b color(sample[0], sample[1], sample[2]);    
-        return color;
+        cv::Vec3b color(sample[0], sample[1], sample[2]);
+        return color;  
     }
-    // else if (option == 3) 
-    // {
-    //     auto sample = random_sample(p);
-    //     cv::Vec3b color(sample[0], sample[1], sample[2]);
-    //     return color;
-    // }
     else 
     {
         throw std::invalid_argument("Did not recieve valid color palette input.");
     }
 }
 
-long euclidean_dist(cv::Vec3b &a, cv::Vec3b &b)
+long get_residual(cv::Vec3b &a, cv::Vec3b &b)
 {
-    // return the euclidean distance between BGR values at (x1, y1) and (x2, y2)
-    using std::pow;
-    using std::sqrt;
-    return sqrt(pow(a.val[0] - b.val[0], 2) + pow(a.val[1] - b.val[1], 2) + pow(a.val[2] - b.val[2], 2));
+    return std::pow(a.val[0] - b.val[0], 2) + std::pow(a.val[1] - b.val[1], 2) + std::pow(a.val[2] - b.val[2], 2);
+}
+
+long double get_RMSE(int n, long rsum)
+{
+    if (n == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return std::sqrt(rsum / n);
+    }
+}
+
+bool should_plot_line(cv::Point2i &p1, cv::Point2i &p2, cv::Mat &img, cv::Mat &newimg, cv::Vec3b &rand_color)
+{
+    unsigned long long int rsum_new = 0;
+    unsigned long long int rsum_old = 0;
+
+    cv::LineIterator line_iter(img, p1, p2, 8);
+    cv::Vec3b buffer(line_iter.count); // buffer for BGR values
+    int n = 0;
+
+    for (int i = 0; i < line_iter.count; i++, ++line_iter)
+    {
+        ++n;
+        // Get BGR Vec3b at pos (x,y)
+        cv::Vec3b im_color = img.at<cv::Vec3b>(line_iter.pos());
+        cv::Vec3b new_color = newimg.at<cv::Vec3b>(line_iter.pos());
+
+        rsum_new += get_residual(im_color, rand_color);
+        rsum_old += get_residual(im_color, new_color);
+    }
+    long double new_RMSE = get_RMSE(n, rsum_new);
+    long double old_RMSE = get_RMSE(n, rsum_old);
+
+    if (new_RMSE < old_RMSE)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void iterate(cv::Mat &img, int prim_size, int iters, int frames, int p_option, bool anti_a)
@@ -126,36 +161,19 @@ void iterate(cv::Mat &img, int prim_size, int iters, int frames, int p_option, b
         color_palette = get_palette(height, width, img, true);
     }
 
-    for (int f = 0; f < frames; f++) 
+    for (int f = 0; f < frames; ++f) 
     {
         
         cv::Mat newimg = new_image(height, width); // Create blank image
 
-        for (int i = 1; i <= iters; i++) 
+        for (int i = 1; i <= iters; ++i) 
         {
-            long old_dist = 0;
-            long new_dist = 0;
-
             // Get two points and a random color
             auto rand_color = get_color(height, width, img, p_option, color_palette);
             auto point1 = get_first_point(height, width);
             auto point2 = get_second_point(height, width, prim_size, point1);
 
-            cv::LineIterator line_iter(img, point1, point2, 8);
-            cv::Vec3b buffer(line_iter.count); // buffer for BGR values
-
-            for (int i = 0; i < line_iter.count; i++, ++line_iter) 
-            {
-
-                // Get BGR Vec3b at pos (x,y)
-                cv::Vec3b im_color = img.at<cv::Vec3b>(line_iter.pos());
-                cv::Vec3b new_color = newimg.at<cv::Vec3b>(line_iter.pos()); 
-
-                new_dist += euclidean_dist(im_color, rand_color);
-                old_dist += euclidean_dist(im_color, new_color);   
-            }
-            // if new score is less than old score, add line to canvas
-            if (new_dist < old_dist)
+            if (should_plot_line(point1, point2, img, newimg, rand_color))
             {
                 line(newimg, point1, point2, rand_color, 1, a_a);
             }
