@@ -1,3 +1,0 @@
-/home/red/projects/Polygons/build/CMakeFiles/rebuild_cache.dir
-/home/red/projects/Polygons/build/CMakeFiles/edit_cache.dir
-/home/red/projects/Polygons/build/CMakeFiles/Polygons.dir
