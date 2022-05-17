@@ -1,10 +1,9 @@
-#include <iostream>
-#include <filesystem>
+#include "output.hpp"
 
-#include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-#include "output.hpp"
+#include <filesystem>
+#include <iostream>
 
 void output_to_console(int &i , int &iters) 
 {

@@ -1,8 +1,8 @@
-#include <iostream>
-#include <opencv2/opencv.hpp>
+#include "loader.hpp"
+
 #include <opencv2/imgcodecs.hpp>
 
-#include "loader.hpp"
+#include <string>
 
 cv::Mat load_image(std::string filepath)
 {
