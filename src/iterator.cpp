@@ -17,25 +17,79 @@ cv::Point2i get_first_point(int &height, int &width)
     return cv::Point2i(rand() % width + 1, rand() % height + 1);
 }
 
+// cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Point2i &point1)
+// {
+//     // return (x,y) point from first (x,y) point +/- line_length within canvas bounds
+//     int x_min = point1.x - line_length;
+//     int x_max = point1.x + line_length;
+
+//     int y_min = point1.y - line_length;
+//     int y_max = point1.y + line_length;
+
+//     int i = rand() % (x_max - x_min + 1) + x_min;
+//     int j = rand() % (y_max - y_min + 1) + y_min; // create point from px +/- line
+
+//     if (i < 0) {i = 0;}
+//     if (i > width) {i = width;}
+
+//     if (j < 0) {j = 0;}
+//     if (j > height) {j = height;}
+
+//     return cv::Point2i(i, j);
+// }
+
 cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Point2i &point1)
 {
-    // return (x,y) point from first (x,y) point +/- line_length within canvas bounds
-    int x_min = point1.x - line_length;
-    int x_max = point1.x + line_length;
+    using std::pow;
+    using std::sqrt;
 
-    int y_min = point1.y - line_length;
-    int y_max = point1.y + line_length;
+    int x1 = point1.x;
+    int y1 = point1.y;
+    bool is_pos = rand() % 2;
+    bool vertical_dist = rand() % 2;
+    int x2;
+    int y2;
 
-    int i = rand() % (x_max - x_min + 1) + x_min;
-    int j = rand() % (y_max - y_min + 1) + y_min; // create point from px +/- line
+    if (vertical_dist)
+    {
+        int x1_min = x1 - line_length;
+        int x1_max = x1 + line_length;
 
-    if (i < 0) {i = 0;}
-    if (i > width) {i = width;}
+        x2 = rand() % (x1_max - x1_min + 1) + x1_min;
 
-    if (j < 0) {j = 0;}
-    if (j > height) {j = height;}
+        if (is_pos)
+        {
+            y2 = sqrt( pow(line_length,2) - pow(x2 - x1,2) ) + y1;
+        }
+        else
+        {
+            y2 = -sqrt( pow(line_length,2) - pow(x2 - x1,2) ) + y1;        
+        }        
+    }
+    else
+    {
+        int y1_min = y1 - line_length;
+        int y1_max = y1 + line_length;
 
-    return cv::Point2i(i, j);
+        y2 = rand() % (y1_max - y1_min + 1) + y1_min;
+
+        if (is_pos)
+        {
+            x2 = sqrt( pow(line_length,2) - pow(y2 - y1,2) ) + x1;
+        }
+        else
+        {
+            x2 = -sqrt( pow(line_length,2) - pow(y2 - y1,2) ) + x1;        
+        }
+    }
+
+    if (x2 < 0) {x2 = 0;}
+    if (x2 > width) {x2 = width - 1;}
+
+    if (y2 < 0) {y2 = 0;}
+    if (y2 > height) {y2 = height - 1;}
+
+    return cv::Point2i(x2, y2);
 }
 
 std::vector<std::array<uchar, 3>> get_palette(int &height, int &width, cv::Mat &img, bool make_unique)
@@ -90,58 +144,53 @@ cv::Vec3b get_color(int &height, int &width, cv::Mat &img, int option, std::vect
     }
 }
 
-long get_residual(cv::Vec3b &a, cv::Vec3b &b)
+uint32_t get_residual(cv::Vec3b &a, cv::Vec3b &b)
 {
     return std::pow(a.val[0] - b.val[0], 2) + std::pow(a.val[1] - b.val[1], 2) + std::pow(a.val[2] - b.val[2], 2);
 }
 
-long double get_RMSE(int n, long rsum)
+uint32_t get_RMSE(int &n, uint32_t &rsum)
 {
-    if (n == 0)
-    {
-        return 0;
-    }
-    else
+    if (n != 0)
     {
         return std::sqrt(rsum / n);
     }
+    return 0;
 }
 
 bool should_plot_line(cv::Point2i &p1, cv::Point2i &p2, cv::Mat &img, cv::Mat &newimg, cv::Vec3b &rand_color)
 {
-    unsigned long long int rsum_new = 0;
-    unsigned long long int rsum_old = 0;
+    uint32_t rsum_new = 0;
+    uint32_t rsum_old = 0;
+    int n = 0;
 
     cv::LineIterator line_iter(img, p1, p2, 8);
     cv::Vec3b buffer(line_iter.count); // buffer for BGR values
-    int n = 0;
 
     for (int i = 0; i < line_iter.count; i++, ++line_iter)
     {
         ++n;
         // Get BGR Vec3b at pos (x,y)
-        cv::Vec3b im_color = img.at<cv::Vec3b>(line_iter.pos());
-        cv::Vec3b new_color = newimg.at<cv::Vec3b>(line_iter.pos());
+        auto im_color = img.at<cv::Vec3b>(line_iter.pos());
+        auto new_color = newimg.at<cv::Vec3b>(line_iter.pos());
 
         rsum_new += get_residual(im_color, rand_color);
         rsum_old += get_residual(im_color, new_color);
     }
-    long double new_RMSE = get_RMSE(n, rsum_new);
-    long double old_RMSE = get_RMSE(n, rsum_old);
+    auto new_RMSE = get_RMSE(n, rsum_new);
+    auto old_RMSE = get_RMSE(n, rsum_old);
 
     if (new_RMSE < old_RMSE)
     {
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 void iterate(cv::Mat &img, int prim_size, int iters, int frames, int p_option, bool anti_a)
 {
     srand (time(NULL)); // Intialize seed for rand() function
+    int64_t asdf;
 
     int height = img.size().height;
     int width = img.size().width;
@@ -163,7 +212,7 @@ void iterate(cv::Mat &img, int prim_size, int iters, int frames, int p_option, b
 
     for (int f = 0; f < frames; ++f) 
     {
-        
+
         cv::Mat newimg = new_image(height, width); // Create blank image
 
         for (int i = 1; i <= iters; ++i) 
