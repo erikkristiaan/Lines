@@ -1,6 +1,5 @@
-#include <iostream>
+#pragma once
 
-#include <opencv2/opencv.hpp>
 #include <opencv2/imgcodecs.hpp>
 
 void output_to_console(int &i, int &iters);
