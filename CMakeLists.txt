@@ -20,5 +20,5 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 include_directories(./include)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-set(CMAKE_CXX_FLAGS "-Ofast")
-# set(CMAKE_CXX_FLAGS_DEBUG "-O2")
+# set(CMAKE_CXX_FLAGS "-Ofast")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0")

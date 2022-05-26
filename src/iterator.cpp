@@ -13,6 +13,16 @@
 #include <time.h>
 #include <vector>
 
+struct Primitive
+{
+    cv::Vec3b color;
+    cv::Point2i point1;
+    cv::Point2i point2;
+    std::string prim_type;
+    int AA_option;
+    int radius;
+};
+
 cv::Point2i get_first_point(int &height, int &width)
 {
     // return random (x,y) point from the canvas
@@ -39,9 +49,9 @@ cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Poin
         x2 = rand() % (x1_max - x1_min + 1) + x1_min;
 
         if (is_pos)
-            y2 = sqrt( pow(line_length,2) - pow(x2 - x1,2) ) + y1;
+            y2 = sqrt(pow(line_length,2) - pow(x2 - x1,2)) + y1;
         else
-            y2 = -sqrt( pow(line_length,2) - pow(x2 - x1,2) ) + y1;         
+            y2 = -sqrt(pow(line_length,2) - pow(x2 - x1,2)) + y1;         
     }
     else
     {
@@ -51,9 +61,9 @@ cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Poin
         y2 = rand() % (y1_max - y1_min + 1) + y1_min;
 
         if (is_pos)
-            x2 = sqrt( pow(line_length,2) - pow(y2 - y1,2) ) + x1;
+            x2 = sqrt(pow(line_length,2) - pow(y2 - y1,2)) + x1;
         else
-            x2 = -sqrt( pow(line_length,2) - pow(y2 - y1,2) ) + x1;        
+            x2 = -sqrt(pow(line_length,2) - pow(y2 - y1,2)) + x1;        
     }
 
     // If x2 / y2 values are outside of canvas bounds, set x2 / y2 to min or max of canvas bounds
@@ -108,7 +118,7 @@ cv::Vec3b get_color(int &height, int &width, int option, std::vector<std::array<
     {
         // return random BGR value from input palette vector
         auto sample = random_sample(p);
-        cv::Vec3b color(sample[0], sample[1], sample[2]); // BGR
+        cv::Vec3b color(sample[0], sample[1], sample[2]);
         return color;  
     }
     else 
@@ -158,6 +168,72 @@ bool should_plot_line(cv::Point2i &p1, cv::Point2i &p2, cv::Mat &img, cv::Mat &n
         return false;
 }
 
+void plot_circle(cv::Mat &img, cv::Mat &newimg, Primitive &iter)
+{  
+    uint32_t rsum_new;
+    uint32_t rsum_old;
+    cv::Mat newimg_copy = newimg;
+    int n = 0;
+
+    // plot circle
+    cv::circle(newimg_copy, iter.point1, iter.radius, iter.color, cv::FILLED, iter.AA_option);
+
+    // set bounds to (x-r, y-r) and (x+r, y+r)
+    int x1 = iter.point1.x - iter.radius;
+    int x2 = iter.point1.x + iter.radius;
+
+    int y1 = iter.point1.y - iter.radius;
+    int y2 = iter.point1.y + iter.radius;
+
+
+    if (x1 < 0) {x1 = 0;}
+    if (x1 > img.size().width) {x1 = img.size().width - 1;}
+
+    if (y1 < 0) {y1 = 0;}
+    if (y1 > img.size().height) {y1 = img.size().height - 1;}
+
+    if (x2 < 0) {x2 = 0;}
+    if (x2 > img.size().width) {x2 = img.size().width - 1;}
+
+    if (y2 < 0) {y2 = 0;}
+    if (y2 > img.size().height) {y2 = img.size().height - 1;}
+    
+    // iterate over bounds
+    for (int x = x1; x <= x2; x++)
+    {
+        for (int y = y1; y <= y2; y++)
+        {
+            n++;
+            auto im_color = img.at<cv::Vec3b>(x,y);
+            auto new_color = newimg.at<cv::Vec3b>(x, y);
+            auto copy_color = newimg_copy.at<cv::Vec3b>(x,y);
+
+            rsum_new += get_residual(im_color, copy_color);
+            rsum_old += get_residual(im_color, new_color);
+        }
+    }
+    auto new_RMSE = get_RMSE(n, rsum_new);
+    auto old_RMSE = get_RMSE(n, rsum_old);
+
+    if (new_RMSE < old_RMSE)
+    {
+        newimg = newimg_copy;
+    }
+}
+
+void plotter(cv::Mat &img, cv::Mat &newimg, Primitive &iter)
+{
+    if (iter.prim_type == "line")
+    {
+        if (should_plot_line(iter.point1, iter.point2, img, newimg, iter.color))
+            line(newimg, iter.point1, iter.point2, iter.color, 1, iter.AA_option);
+    }
+    else if (iter.prim_type == "circle")
+    {
+        plot_circle(img, newimg, iter);
+    }
+}
+
 void iterate(cv::Mat &img, Arguments args)
 {
     // seed current time for rand() function
@@ -180,13 +256,15 @@ void iterate(cv::Mat &img, Arguments args)
 
         for (int i = 1; i <= args.iters; ++i) 
         {
+            Primitive iter;
             // Get two points and a random color
-            auto rand_color = get_color(height, width, args.palette, color_palette);
-            auto point1 = get_first_point(height, width);
-            auto point2 = get_second_point(height, width, args.primitive_size, point1);
+            iter.prim_type = "circle";
+            iter.color = get_color(height, width, args.palette, color_palette);
+            iter.point1 = get_first_point(height, width);
+            iter.point2 = get_second_point(height, width, args.primitive_size, iter.point1);
+            iter.radius = args.primitive_size;
 
-            if (should_plot_line(point1, point2, img, newimg, rand_color))
-                line(newimg, point1, point2, rand_color, 1, aliasing_option);
+            plotter(img, newimg, iter);
 
             // output progress to console
             if (i % (args.iters / 20) == 0)
@@ -195,3 +273,9 @@ void iterate(cv::Mat &img, Arguments args)
         finished_frame(f, args.frames, newimg);
     }
 }
+
+// cv::Mat makecopy(cv::Mat &newimg)
+// {
+//     cv::Mat copy = newimg;
+//     return copy;
+// }

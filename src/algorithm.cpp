@@ -7,7 +7,7 @@
 
 std::vector<std::array<uchar, 3>> remove_duplicates(std::vector<std::array<uchar, 3>> &vec)
 {
-    // runs in O(n log n) time but only needs to run once. Maybe refactor?
+    // sort input vector, iterate and remove non-unique values, then resize and return vector
     std::sort(vec.begin(), vec.end());
 
     auto it = std::unique(vec.begin(), vec.end());

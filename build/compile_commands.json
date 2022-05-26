@@ -1,0 +1,27 @@
+[
+{
+  "directory": "/root/projects/Polygons/build",
+  "command": "/usr/bin/clang++   -I/root/projects/Polygons/./include -isystem /usr/include/opencv4  -O0   -std=gnu++17 -o CMakeFiles/Polygons.dir/src/main.cpp.o -c /root/projects/Polygons/src/main.cpp",
+  "file": "/root/projects/Polygons/src/main.cpp"
+},
+{
+  "directory": "/root/projects/Polygons/build",
+  "command": "/usr/bin/clang++   -I/root/projects/Polygons/./include -isystem /usr/include/opencv4  -O0   -std=gnu++17 -o CMakeFiles/Polygons.dir/src/iterator.cpp.o -c /root/projects/Polygons/src/iterator.cpp",
+  "file": "/root/projects/Polygons/src/iterator.cpp"
+},
+{
+  "directory": "/root/projects/Polygons/build",
+  "command": "/usr/bin/clang++   -I/root/projects/Polygons/./include -isystem /usr/include/opencv4  -O0   -std=gnu++17 -o CMakeFiles/Polygons.dir/src/loader.cpp.o -c /root/projects/Polygons/src/loader.cpp",
+  "file": "/root/projects/Polygons/src/loader.cpp"
+},
+{
+  "directory": "/root/projects/Polygons/build",
+  "command": "/usr/bin/clang++   -I/root/projects/Polygons/./include -isystem /usr/include/opencv4  -O0   -std=gnu++17 -o CMakeFiles/Polygons.dir/src/output.cpp.o -c /root/projects/Polygons/src/output.cpp",
+  "file": "/root/projects/Polygons/src/output.cpp"
+},
+{
+  "directory": "/root/projects/Polygons/build",
+  "command": "/usr/bin/clang++   -I/root/projects/Polygons/./include -isystem /usr/include/opencv4  -O0   -std=gnu++17 -o CMakeFiles/Polygons.dir/src/algorithm.cpp.o -c /root/projects/Polygons/src/algorithm.cpp",
+  "file": "/root/projects/Polygons/src/algorithm.cpp"
+}
+]

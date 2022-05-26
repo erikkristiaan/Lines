@@ -9,10 +9,11 @@
 
 int main (int argc, char **argv) 
 {
+    // initialized values
     Arguments args;
 
     args.primitive_size = 30;
-    args.iters = 20000000;
+    args.iters = 10000000;
     args.frames = 1;
     args.palette = 3;
     args.show_image = true;
