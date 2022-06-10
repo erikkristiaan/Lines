@@ -1,6 +1,6 @@
-# Polygons
+# Lines
 
-Polygons is a generative art program which prints random 2D primitives to a blank canvas based on an input source image.
+Lines is a generative art program which prints random 2D primitives to a blank canvas based on an input source image.
 
 ## Installation 🤔
 
@@ -11,21 +11,21 @@ Polygons is a generative art program which prints random 2D primitives to a blan
 
 ### Compilation
 
-Compile Polygons on linux with:
+Compile Lines on linux with:
 
 ```
-cd Polygons
+cd Lines
 mkdir build
 cd build
 cmake ../
 cmake --build .
 ```
 
-### Running Polygons
+### Running Lines
 
-You can then run Polygons from the command-line using command:
+You can then run Lines from the command-line using command:
 ```
-./Polygons [arguments]
+./Lines [arguments]
 ```
 
 
@@ -51,21 +51,21 @@ You can then run Polygons from the command-line using command:
 ####  `--filename, -f`
 - Location of the input file. Use with  `-f ~/location/to/file.jpg`. (Default: ../examples/default.jpg)
 
-## Inspiration for Polygons 🙂
+## Inspiration for Lines 🙂
 
-Polygons is a program I wrote a while back to tackle the following programming challenge. I finally got around to converting the program from python to C++ for performance reasons while also adding some new features.
+Lines is a program I wrote a while back to tackle the following programming challenge. I finally got around to converting the program from python to C++ for performance reasons while also adding some new features.
 
 ```
-- Load an image (source image)
-- Generate a list of all the colors in the source image
-- Create 2 blank images (image1 and image2)
-- draw a random polygon or circle on image1 using a random color from source image
-- compare image1 to the source image
-- if it's closer in color to the source image than image2, copy image1 to image2; if not, copy image2 to image1 and continue drawing more random shapes and comparing
+- Load an image (source image).
+- Generate a list of all the colors from the source image.
+- Create 2 blank images (image1 and image2).
+- Draw a random primitive on image1 using a random color from the source image.
+- Compare image1 to the source image.
+- If image1 is closer to the source image than image2, copy image1 to image2. If not, copy image2 to image1 and continue iterating.
 ```
 
 ## Example Gallery 🖼️
 
-`./Polygons -c 3 -f ../examples/example3.jpg -a true -p 40 -i 10000000 -x 10`
+`./Lines -c 3 -f ../examples/example3.jpg -a true -p 40 -i 10000000 -x 10`
 
 ![](https://i.imgur.com/4KVlPcn.gif)
