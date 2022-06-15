@@ -70,6 +70,11 @@ Lines is a program I wrote a while back to tackle the following programming chal
 
 ## Example Gallery 🖼️
 
+`./Lines -c 3 -a true -p 50 -i 10000000`
+
+![](https://user-images.githubusercontent.com/8892722/173780297-26b9b3c3-e4ff-44ef-ac96-aab3568c2f40.jpg)
+
+
 `./Lines -c 3 -f ../examples/example3.jpg -a true -p 40 -i 10000000 -x 10`
 
 ![](https://i.imgur.com/4KVlPcn.gif)
