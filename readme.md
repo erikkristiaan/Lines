@@ -2,6 +2,10 @@
 
 Lines is a generative art program which prints random 2D primitives to a blank canvas based on an input source image.
 
+<p align="center">
+  <img src='https://user-images.githubusercontent.com/8892722/173779269-796cb672-44b0-4cb2-8332-070e9f598ac7.png'>
+</p>
+
 ## Installation 🤔
 
 ### Dependencies
