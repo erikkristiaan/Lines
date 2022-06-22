@@ -21,6 +21,7 @@ cv::Point2i get_first_point(int &height, int &width)
 
 cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Point2i &point1)
 {
+    // return (x,y) point from the canvas that is line_length pixels away from point1.
     using std::pow;
     using std::sqrt;
 
@@ -31,6 +32,7 @@ cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Poin
     int x2;
     int y2;
 
+    // if v_dist is true, then use vertical distribution, else use horizontal distribution
     if (v_dist)
     {
         int x1_min = x1 - line_length;
@@ -68,6 +70,8 @@ cv::Point2i get_second_point(int &height, int &width, int &line_length, cv::Poin
 
 std::vector<std::array<uchar, 3>> get_palette(int &height, int &width, cv::Mat &img, bool make_unique)
 {
+    // return a vector of colors that are unique to the image. If make_unique is set to false return the image color
+    // palette with duplicates.
     std::vector<std::array<uchar, 3>> palette;
 
     for (int y = 0; y < height; ++y) 
@@ -88,15 +92,16 @@ std::vector<std::array<uchar, 3>> get_palette(int &height, int &width, cv::Mat &
     return palette;
 }
 
-std::array<uchar, 3> random_sample(std::vector<std::array<uchar, 3>> &vec)
+std::array<uchar, 3> random_sample(std::vector<std::array<uchar, 3>> &colors_list)
 {
-    uint32_t index = rand() % vec.size();
-    auto sample = vec[index];
+    // return a random sample (BGR val) from the vector of colors we wish to use.
+    uint32_t index = rand() % colors_list.size();
+    auto sample = colors_list[index];
 
     return sample;
 }
 
-cv::Vec3b get_color(int &height, int &width, int option, std::vector<std::array<uchar, 3>> &p)
+cv::Vec3b get_color(int &height, int &width, int &option, std::vector<std::array<uchar, 3>> &colors_list)
 {
     if (option == 1) 
     {
@@ -107,11 +112,11 @@ cv::Vec3b get_color(int &height, int &width, int option, std::vector<std::array<
     else if (option == 2 || option == 3) 
     {
         // return random BGR value from input palette vector
-        auto sample = random_sample(p);
+        auto sample = random_sample(colors_list);
         cv::Vec3b color(sample[0], sample[1], sample[2]); // BGR
         return color;  
     }
-    else 
+    else
     {
         throw std::invalid_argument("Did not recieve valid color palette input.");
     }
@@ -119,11 +124,13 @@ cv::Vec3b get_color(int &height, int &width, int option, std::vector<std::array<
 
 uint32_t get_residual(cv::Vec3b &a, cv::Vec3b &b)
 {
+    // return the residual between two colors
     return std::pow(a.val[0] - b.val[0], 2) + std::pow(a.val[1] - b.val[1], 2) + std::pow(a.val[2] - b.val[2], 2);
 }
 
 uint32_t get_RMSE(int &n, uint32_t &rsum)
 {
+    // return the root mean squared error of the vector of residuals
     if (n != 0)
         return std::sqrt(rsum / n);
 
@@ -149,6 +156,7 @@ bool should_plot_line(cv::Point2i &p1, cv::Point2i &p2, cv::Mat &img, cv::Mat &n
         rsum_new += get_residual(im_color, rand_color);
         rsum_old += get_residual(im_color, new_color);
     }
+
     auto new_RMSE = get_RMSE(n, rsum_new);
     auto old_RMSE = get_RMSE(n, rsum_old);
 
@@ -178,7 +186,7 @@ void iterate(cv::Mat &img, Arguments args)
     {
         cv::Mat newimg = new_image(height, width); // Create blank image
 
-        for (int i = 1; i <= args.iters; ++i) 
+        for (int i = 1; i <= args.iters; ++i)
         {
             // Get two points and a random color
             auto rand_color = get_color(height, width, args.palette, color_palette);
