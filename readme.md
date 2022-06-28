@@ -71,11 +71,15 @@ Lines is a program I wrote a while back to tackle the following programming chal
 
 Lines however utilizes some tricks to vastly speed up performance while more or less creating the same results. For instance, Lines only does comparisons on CV matricies with RGB values and will only check RGB values along the pixels that have changed.
 
-## Example Gallery
-
+`./Lines -c 3 -a true -p 50 -i 10000000`
 `./Lines -c 3 -a true -p 50 -i 10000000`
 
-![](https://user-images.githubusercontent.com/8892722/173780297-26b9b3c3-e4ff-44ef-ac96-aab3568c2f40.jpg)
+## Example Gallery
 
-`./Lines -p 50`
-![](https://user-images.githubusercontent.com/8892722/176154522-9d3f02be-3875-4fce-84d0-5ba480b4e43d.jpg)
+<p align="center">
+  <img src='https://user-images.githubusercontent.com/8892722/173780297-26b9b3c3-e4ff-44ef-ac96-aab3568c2f40.jpg'>
+</p>
+
+<p align="center">
+  <img src='https://user-images.githubusercontent.com/8892722/176154522-9d3f02be-3875-4fce-84d0-5ba480b4e43d.jpg'>
+</p>
