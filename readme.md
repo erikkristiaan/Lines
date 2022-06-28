@@ -6,7 +6,7 @@ Lines is a generative art program which reproduces images by drawing random 2D l
   <img src='https://user-images.githubusercontent.com/8892722/173779269-796cb672-44b0-4cb2-8332-070e9f598ac7.png' width=700>
 </p>
 
-## Installation 🤔
+## Installation
 
 ### Dependencies
 - OpenCV
@@ -56,7 +56,7 @@ You can then run Lines from the command-line using command:
 ####  `--filename, -f`
 - Location of the input file. Use with  `-f ~/location/to/file.jpg`. (Default: ../examples/default.jpg)
 
-## Inspiration for Lines & How it works 🙂
+## Inspiration for Lines & How it works
 
 Lines is a program I wrote a while back to tackle the following programming challenge. I finally got around to converting the program from python to C++ for performance reasons while also adding some new features.
 
@@ -71,8 +71,11 @@ Lines is a program I wrote a while back to tackle the following programming chal
 
 Lines however utilizes some tricks to vastly speed up performance while more or less creating the same results. For instance, Lines only does comparisons on CV matricies with RGB values and will only check RGB values along the pixels that have changed.
 
-## Example Gallery 🖼️
+## Example Gallery
 
 `./Lines -c 3 -a true -p 50 -i 10000000`
 
 ![](https://user-images.githubusercontent.com/8892722/173780297-26b9b3c3-e4ff-44ef-ac96-aab3568c2f40.jpg)
+
+`./Lines -p 50`
+![](https://user-images.githubusercontent.com/8892722/176154522-9d3f02be-3875-4fce-84d0-5ba480b4e43d.jpg)
