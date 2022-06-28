@@ -76,10 +76,12 @@ Lines however utilizes some tricks to vastly speed up performance while more or 
 
 ## Example Gallery
 
+<!---`./Lines -c 3 -a true -p 50 -i 10000000` -->
 <p align="center">
   <img src='https://user-images.githubusercontent.com/8892722/173780297-26b9b3c3-e4ff-44ef-ac96-aab3568c2f40.jpg'>
 </p>
 
+<!---`./Lines -p 50` -->
 <p align="center">
   <img src='https://user-images.githubusercontent.com/8892722/176154522-9d3f02be-3875-4fce-84d0-5ba480b4e43d.jpg'>
 </p>
